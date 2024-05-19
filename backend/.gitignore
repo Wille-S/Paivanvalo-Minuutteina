@@ -1,0 +1,27 @@
+# Ignore Composer dependencies
+/vendor
+
+# Ignore Composer itself
+composer.phar
+
+# Ignore environment variable files
+.env
+
+# Ignore cache and log files
+/storage
+/cache
+/logs
+
+# Ignore temporary files
+*.tmp
+*.log
+*.lock
+*.swp
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+.idea
+*.sublime-project
+*.sublime-workspace
+.vscode
