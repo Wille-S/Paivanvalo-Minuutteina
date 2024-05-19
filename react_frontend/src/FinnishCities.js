@@ -149,7 +149,7 @@ const FinnishCities = [
     "luoto",
     "luumäki",
     "maalahti",
-    "maarianhamina – mariehamn",
+    "maarianhamina",
     "marttila",
     "masku",
     "merijärvi",

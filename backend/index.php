@@ -5,11 +5,16 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require 'vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$apiKey = $_ENV['OPEN_CAGE_API_KEY'];
+
 use GuzzleHttp\Client;
 
 function getCoordinates($city) {
+    global $apiKey;
     $client = new Client();
-    $apiKey = 'd7b090cb522d4e1ab0acc8ae20157398'; // Replace with your actual API key
     try {
         $response = $client->get("https://api.opencagedata.com/geocode/v1/json?q={$city}&key={$apiKey}", [
             'verify' => false
