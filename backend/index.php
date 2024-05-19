@@ -36,29 +36,25 @@ function getDaylightData($lat, $lng, $date) {
     $data = json_decode($response->getBody(), true);
 
     if ($data['status'] == 'OK') {
-        // Get the day_length in seconds
-        $dayLength = $data['results']['day_length'];
+        $sunrise = $data['results']['sunrise'];
+        $sunset = $data['results']['sunset'];
 
-        // Handle edge cases
-        if ($dayLength == 0) {
-            $sunrise = $data['results']['sunrise'];
-            $sunset = $data['results']['sunset'];
+        $sunriseTime = new DateTime($sunrise);
+        $sunsetTime = new DateTime($sunset);
+        $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60; // Convert to minutes
 
-            if (is_null($sunrise) && is_null($sunset)) {
-                // If both sunrise and sunset are null, determine if it's polar night or midnight sun
-                $solarNoon = new DateTime($data['results']['solar_noon']);
-                if ($solarNoon->format('H') == '00') {
-                    // Polar night (sun never rises)
-                    return 0;
-                } elseif ($solarNoon->format('H') == '12') {
-                    // Midnight sun (sun never sets)
-                    return 24 * 60;
+        // Check if calculated dayLength is zero or near-zero, which might be erroneous
+        if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies
+            // Further refine the check based on the date and latitude
+            $month = date('m', strtotime($date));
+            if ($lat >= 66.5) { // Arctic Circle latitude
+                if ($month >= 5 && $month <= 7) {
+                    return 24 * 60; // Full day of sunlight
                 }
             }
         }
 
-        // Normal case
-        return $dayLength / 60; // Return day length in minutes
+        return $dayLength;
     } else {
         return null;
     }

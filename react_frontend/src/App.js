@@ -1,29 +1,34 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import DaylightChart from './DayLightChart';
+import FinnishCities from './FinnishCities';
 
 function App() {
   const [city, setCity] = useState('');
   const [data, setData] = useState([]);
 
+  function capitalize(cityName) {
+    return cityName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  }
+
   const addCity = async () => {
+    if (!FinnishCities.includes(city.toLowerCase())) {
+      alert("Please enter a valid city in Finland.");
+      return;
+    }
+
     const dates = Array.from({ length: 12 }, (_, i) => new Date(2024, i, 15).toISOString().split('T')[0]);
     const promises = dates.map(date => axios.get(`http://localhost:8000?city=${city}&date=${date}`));
     const responses = await Promise.all(promises);
-  
-    console.log('API Responses:', responses);
-  
+
     const daylightData = responses.map((response, index) => ({
       date: dates[index],
       daylight: response.data.daylight,
     }));
-  
-    console.log('Daylight Data:', daylightData);
-  
-    setData([...data, { city, daylightData }]);
+
+    setData([...data, { city: capitalize(city), daylightData }]); // Capitalize city name here
     setCity('');
   };
-  
 
   return (
     <div className="container mx-auto p-4">
