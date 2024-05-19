@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 
 function getCoordinates($city) {
     $client = new Client();
-    $apiKey = 'd7b090cb522d4e1ab0acc8ae20157398';
+    $apiKey = 'd7b090cb522d4e1ab0acc8ae20157398'; // Replace with your actual API key
     try {
         $response = $client->get("https://api.opencagedata.com/geocode/v1/json?q={$city}&key={$apiKey}", [
             'verify' => false
@@ -41,7 +41,7 @@ function getDaylightData($lat, $lng, $date) {
 
         $sunriseTime = new DateTime($sunrise);
         $sunsetTime = new DateTime($sunset);
-        $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60;
+        $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60; // Convert to minutes
 
         // Check if calculated dayLength is zero or near-zero, which might be erroneous
         if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies

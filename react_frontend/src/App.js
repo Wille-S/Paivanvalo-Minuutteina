@@ -23,7 +23,7 @@ function App() {
 
     const daylightData = responses.map((response, index) => ({
       date: dates[index],
-      daylight: Math.round(response.data.daylight),
+      daylight: response.data.daylight,
     }));
 
     setData([...data, { city: capitalize(city), daylightData }]); // Capitalize city name here
