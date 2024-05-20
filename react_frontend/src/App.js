@@ -42,7 +42,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen justify-between">
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 h-1/2">
         <h1 className="text-2xl font-bold text-center mb-4">Daylight Visualizer</h1>
         <form onSubmit={addCity} className="mb-4">
           <input

@@ -50,12 +50,10 @@ function getDaylightData($lat, $lng, $date) {
 
         // Check if calculated dayLength is zero or near-zero, which might be erroneous
         if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies
-            // Further refine the check based on the date and latitude
+            // Further refine the check based on the date
             $month = date('m', strtotime($date));
-            if ($lat >= 66.5) { // Arctic Circle latitude
-                if ($month >= 5 && $month <= 7) {
-                    return 24 * 60; // Full day of sunlight
-                }
+            if ($month >= 4 && $month <= 8) {
+                 return 24 * 60; // Full day of sunlight
             }
         }
 

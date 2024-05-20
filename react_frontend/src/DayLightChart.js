@@ -59,7 +59,7 @@ function DaylightChart({ data }) {
   };
 
   return (
-    <div className="p-4 bg-white shadow-xl rounded-lg">
+    <div className="p-4 bg-white shadow-xl h-full rounded-lg">
       <Bar data={chartData} options={options} />
     </div>
   );
