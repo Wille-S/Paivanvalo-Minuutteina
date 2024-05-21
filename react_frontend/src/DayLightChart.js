@@ -34,7 +34,8 @@ function DaylightChart({ data }) {
           text: 'Daylight (minutes)',
           color: '#4B5563', // Tailwind gray-700
         },
-        beginAtZero: true
+        beginAtZero: true,
+        max: 1440,
       }
     },
     plugins: {

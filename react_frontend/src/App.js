@@ -15,21 +15,33 @@ function App() {
 
   const addCity = async (event) => {
     event.preventDefault(); // Prevent the form from causing a page reload
-    if (!FinnishCities.includes(city.toLowerCase())) {
-      alert("Please enter a valid city in Finland.");
-      return;
-    }
+  const normalizedCity = city.toLowerCase(); // Normalize city name to lowercase
+  if (!FinnishCities.includes(normalizedCity)) {
+    alert("Please enter a valid city in Finland.");
+    return;
+  }
 
-    setLoading(true);
-    const dates = Array.from({ length: 12 }, (_, i) => new Date(2024, i, 15).toISOString().split('T')[0]);
-    const promises = dates.map(date => axios.get(`http://localhost:8000?city=${city}&date=${date}`));
+  setLoading(true);
+  const dates = Array.from({ length: 12 }, (_, i) => new Date(2024, i, 15).toISOString().split('T')[0]);
 
+  // Check LocalStorage first before making API calls
+  const cachedData = localStorage.getItem(normalizedCity); // Use normalized city name for cache key
+  if (cachedData) {
+    const parsedData = JSON.parse(cachedData);
+    setData(prevData => [...prevData, { city: capitalize(city), daylightData: parsedData }]);
+    setCity('');
+    setLoading(false);
+  } else {
+    const promises = dates.map(date => axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`));
     try {
       const responses = await Promise.all(promises);
       const daylightData = responses.map((response, index) => ({
         date: dates[index],
         daylight: Math.round(response.data.daylight),
       }));
+
+      // Store the fetched data in LocalStorage using the normalized city name
+      localStorage.setItem(normalizedCity, JSON.stringify(daylightData));
 
       setData(prevData => [...prevData, { city: capitalize(city), daylightData }]);
       setCity('');
@@ -38,7 +50,8 @@ function App() {
       alert("Failed to load data.");
     }
     setLoading(false);
-  };
+  }
+};
 
   return (
     <div className="flex flex-col h-screen justify-between">
