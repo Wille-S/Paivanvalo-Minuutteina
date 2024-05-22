@@ -49,7 +49,9 @@ function App() {
       setLoading(false);
     } else {
       const promises = dates.map((date) =>
-        axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`)
+        axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`, {
+          timeout: 20000
+        })
       );
       try {
         const responses = await Promise.all(promises);
@@ -68,16 +70,20 @@ function App() {
         setCity("");
       } catch (error) {
         console.error("Failed to fetch data: ", error);
-        alert("Failed to load data.");
+        if (error.code === "ECONNABORTED") {
+          alert("Request timed out. Please try again later.");
+        } else {
+          alert("Failed to load data.");
+        }
       }
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-screen justify-between">
+    <div className="flex flex-col h-screen justify-between bg-gray-700">
       <div className="container mx-auto p-4 h-1/2">
-        <h1 className="text-2xl font-bold text-center mb-4">
+        <h1 className="text-2xl font-bold text-center text-white mb-4">
           Daylight Visualizer
         </h1>
         <form onSubmit={addCity} className="mb-4">
@@ -86,17 +92,17 @@ function App() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Enter city"
-            className="border p-2 mr-2 rounded w-full md:w-auto"
+            className="border p-2 mr-2 rounded w-full bg-gray-800 text-white md:w-auto"
           />
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 md:mt-0"
+            className="bg-gray-800 hover:bg-gray-900 text-white border font-bold py-2 px-4 rounded mt-2 md:mt-0"
           >
             Add City
           </button>
         </form>
         {loading ? (
-          <div>Loading...</div>
+          <div className="text-white">Loading...</div>
         ) : (
           data.length > 0 && <DaylightChart data={data} />
         )}

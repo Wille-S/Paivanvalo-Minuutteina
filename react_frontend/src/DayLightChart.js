@@ -1,9 +1,10 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
+import Chart from 'chart.js/auto';
 
 function DaylightChart({ data }) {
   // Define a palette of colors for the bars
+  Chart.defaults.color = '#ffffff';
   const colors = ['#4dc9f6', '#f67019', '#f53794', '#537bc4', '#acc236', '#166a8f', '#00a950', '#58595b', '#8549ba'];
 
   // Create chart data with dynamic colors
@@ -25,14 +26,12 @@ function DaylightChart({ data }) {
         title: {
           display: true,
           text: '14th of Month',
-          color: '#4B5563', // Tailwind gray-700
         }
       },
       y: {
         title: {
           display: true,
           text: 'Daylight (minutes)',
-          color: '#4B5563', // Tailwind gray-700
         },
         beginAtZero: true,
         max: 1440,
@@ -43,7 +42,6 @@ function DaylightChart({ data }) {
         position: 'top',
         labels: {
           padding: 20,
-          color: '#374151' // Tailwind gray-700
         }
       },
       tooltip: {
@@ -60,7 +58,7 @@ function DaylightChart({ data }) {
   };
 
   return (
-    <div className="p-4 bg-white shadow-xl h-full rounded-lg">
+    <div className="p-4 bg-gray-800 shadow-xl h-full rounded-lg">
       <Bar data={chartData} options={options} />
     </div>
   );
