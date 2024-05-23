@@ -4,6 +4,8 @@ Päivänvalo minuutteina äpillä voit lisätä kaupunkeja pylväsdiagrammiin, j
 
 Koska API pyynöt ovat hitaita, äppi tallenttaa localStorageen minuutti tiedot.
 
+Deployed with Vercel & Railway
+
 ### Edellytykset
 Seuraavat asennettuna:
 - [npm](https://www.npmjs.com/)
