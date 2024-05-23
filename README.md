@@ -2,6 +2,8 @@
 
 Päivänvalo minuutteina äpillä voit lisätä kaupunkeja pylväsdiagrammiin, joka näyttää kuinka monta minuuttia valoa on vuoden mittaan eri kuukausina.
 
+Koska API pyynöt ovat hitaita, äppi tallenttaa localStorageen minuutti tiedot.
+
 ### Edellytykset
 Seuraavat asennettuna:
 - [npm](https://www.npmjs.com/)
