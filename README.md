@@ -1,4 +1,4 @@
-# Kirjakauppa
+# Päivänvalo minuutteina
 
 Päivänvalo minuutteina äpillä voit lisätä kaupunkeja pylväsdiagrammiin, joka näyttää kuinka monta minuuttia valoa on vuoden mittaan eri kuukausina.
 
@@ -14,6 +14,11 @@ Seuraavat asennettuna:
 #### Respositorion kloonaaminen
 ```bash
 git clone https://github.com/Wille-S/DayLenght.git
+```
+#### API avain OpenCage varten
+Luo .env tiedosto backend kansion juureen johon lisää
+```bash
+OPEN_CAGE_API_KEY=Tähän se avain
 ```
 #### PHP pakkausten asentaminen
 ```bash
