@@ -58,7 +58,7 @@ function App() {
   
     try {
       const response = await axios.post(
-        "http://localhost:8000",
+        "https://daylenght-production.up.railway.app",
         {
           city: normalizedCity,
           dates: dates,
