@@ -8,10 +8,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require 'vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+}
 
-$apiKey = $_ENV['OPEN_CAGE_API_KEY'];
+$apiKey = getenv('OPEN_CAGE_API_KEY') ?: $_ENV['OPEN_CAGE_API_KEY'];
 
 use GuzzleHttp\Client;
 
