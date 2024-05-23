@@ -24,20 +24,20 @@ function App() {
       setCity("");
       return;
     }
-
+  
     // Check if city has already been added
     if (data.some((entry) => entry.city.toLowerCase() === normalizedCity)) {
       alert("Kaupunki on jo lisätty.");
       setCity("");
       return;
     }
-
+  
     setLoading(true);
     const dates = Array.from(
       { length: 12 },
       (_, i) => new Date(2024, i, 15).toISOString().split("T")[0]
     );
-
+  
     // Check LocalStorage first before making API calls
     const cachedData = localStorage.getItem(normalizedCity); // Use normalized city name for cache key
     if (cachedData) {
@@ -55,19 +55,29 @@ function App() {
         localStorage.removeItem(normalizedCity); // Remove expired data
       }
     }
-
-    const promises = dates.map((date) =>
-      axios.get(`https://daylenght-production.up.railway.app?city=${normalizedCity}&date=${date}`, {
-        timeout: 20000
-      })
-    );
+  
     try {
-      const responses = await Promise.all(promises);
-      const daylightData = responses.map((response, index) => ({
-        date: dates[index],
-        daylight: Math.round(response.data.daylight),
+      const response = await axios.post(
+        "http://localhost:8000",
+        {
+          city: normalizedCity,
+          dates: dates,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 20000,
+        }
+      );
+  
+      console.log("Backend response:", response); // Add this line to log the response
+  
+      const daylightData = response.data.daylightData.map((entry) => ({
+        date: entry.date,
+        daylight: Math.round(entry.daylight),
       }));
-
+  
       // Store the fetched data in LocalStorage with an expiration date
       const expiry = new Date();
       expiry.setFullYear(expiry.getFullYear() + 1);
@@ -75,7 +85,7 @@ function App() {
         normalizedCity,
         JSON.stringify({ daylightData, expiry })
       );
-
+  
       setData((prevData) => [
         ...prevData,
         { city: capitalize(city), daylightData },
@@ -91,6 +101,7 @@ function App() {
     }
     setLoading(false);
   };
+  
 
   const resetData = () => {
     setData([]);

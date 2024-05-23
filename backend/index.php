@@ -38,46 +38,58 @@ function getCoordinates($city) {
     }
 }
 
-function getDaylightData($lat, $lng, $date) {
+function getDaylightData($lat, $lng, $dates) {
     $client = new Client();
-    $response = $client->get("https://api.sunrise-sunset.org/json?lat={$lat}&lng={$lng}&date={$date}&formatted=0", [
-        'verify' => false
-    ]);
-    $data = json_decode($response->getBody(), true);
+    $daylightData = [];
 
-    if ($data['status'] == 'OK') {
-        $sunrise = $data['results']['sunrise'];
-        $sunset = $data['results']['sunset'];
+    foreach ($dates as $date) {
+        $response = $client->get("https://api.sunrise-sunset.org/json?lat={$lat}&lng={$lng}&date={$date}&formatted=0", [
+            'verify' => false
+        ]);
+        $data = json_decode($response->getBody(), true);
 
-        $sunriseTime = new DateTime($sunrise);
-        $sunsetTime = new DateTime($sunset);
-        $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60; // Convert to minutes
+        if ($data['status'] == 'OK') {
+            $sunrise = $data['results']['sunrise'];
+            $sunset = $data['results']['sunset'];
 
-        // Check if calculated dayLength is zero or near-zero, which might be erroneous
-        if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies
-            // Further refine the check based on the date
-            $month = date('m', strtotime($date));
-            if ($month >= 4 && $month <= 8) {
-                return 24 * 60; // Full day of sunlight
+            $sunriseTime = new DateTime($sunrise);
+            $sunsetTime = new DateTime($sunset);
+            $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60; // Convert to minutes
+
+            // Check if calculated dayLength is zero or near-zero, which might be erroneous
+            if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies
+                // Further refine the check based on the date
+                $month = date('m', strtotime($date));
+                if ($month >= 4 && $month <= 8) {
+                    $dayLength = 24 * 60; // Full day of sunlight
+                }
             }
-        }
 
-        return $dayLength;
-    } else {
-        return null;
+            $daylightData[] = ['date' => $date, 'daylight' => $dayLength];
+        }
     }
+
+    return $daylightData;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['city']) && isset($_GET['date'])) {
-    $city = $_GET['city'];
-    $date = $_GET['date'];
-    $coordinates = getCoordinates($city);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
 
-    if ($coordinates) {
-        $daylight = getDaylightData($coordinates['lat'], $coordinates['lng'], $date);
-        echo json_encode(['daylight' => $daylight]);
+    if (isset($input['city']) && isset($input['dates'])) {
+        $city = $input['city'];
+        $dates = $input['dates'];
+        $coordinates = getCoordinates($city);
+
+        if ($coordinates) {
+            $daylightData = getDaylightData($coordinates['lat'], $coordinates['lng'], $dates);
+            $response = ['daylightData' => $daylightData];
+            error_log(print_r($response, true)); // Add this line for logging
+            echo json_encode($response);
+        } else {
+            echo json_encode(['error' => 'Invalid city name']);
+        }
     } else {
-        echo json_encode(['error' => 'Invalid city name']);
+        echo json_encode(['error' => 'Invalid request']);
     }
 } else {
     echo json_encode(['error' => 'Invalid request']);
