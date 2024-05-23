@@ -57,7 +57,7 @@ function App() {
     }
 
     const promises = dates.map((date) =>
-      axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`, {
+      axios.get(`https://daylenght-production.up.railway.app?city=${normalizedCity}&date=${date}`, {
         timeout: 20000
       })
     );
