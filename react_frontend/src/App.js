@@ -20,13 +20,14 @@ function App() {
     event.preventDefault(); // Prevent the form from causing a page reload
     const normalizedCity = city.toLowerCase(); // Normalize city name to lowercase
     if (!FinnishCities.includes(normalizedCity)) {
-      alert("Please enter a valid city in Finland.");
+      alert("Syötä suomalainen kaupunki.");
+      setCity("");
       return;
     }
 
     // Check if city has already been added
     if (data.some((entry) => entry.city.toLowerCase() === normalizedCity)) {
-      alert("This city has already been added.");
+      alert("Kaupunki on jo lisätty.");
       setCity("");
       return;
     }
@@ -41,43 +42,59 @@ function App() {
     const cachedData = localStorage.getItem(normalizedCity); // Use normalized city name for cache key
     if (cachedData) {
       const parsedData = JSON.parse(cachedData);
-      setData((prevData) => [
-        ...prevData,
-        { city: capitalize(city), daylightData: parsedData },
-      ]);
-      setCity("");
-      setLoading(false);
-    } else {
-      const promises = dates.map((date) =>
-        axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`, {
-          timeout: 20000
-        })
-      );
-      try {
-        const responses = await Promise.all(promises);
-        const daylightData = responses.map((response, index) => ({
-          date: dates[index],
-          daylight: Math.round(response.data.daylight),
-        }));
-
-        // Store the fetched data in LocalStorage using the normalized city name
-        localStorage.setItem(normalizedCity, JSON.stringify(daylightData));
-
+      const now = new Date();
+      if (new Date(parsedData.expiry) > now) {
         setData((prevData) => [
           ...prevData,
-          { city: capitalize(city), daylightData },
+          { city: capitalize(city), daylightData: parsedData.daylightData },
         ]);
         setCity("");
-      } catch (error) {
-        console.error("Failed to fetch data: ", error);
-        if (error.code === "ECONNABORTED") {
-          alert("Request timed out. Please try again later.");
-        } else {
-          alert("Failed to load data.");
-        }
+        setLoading(false);
+        return;
+      } else {
+        localStorage.removeItem(normalizedCity); // Remove expired data
       }
-      setLoading(false);
     }
+
+    const promises = dates.map((date) =>
+      axios.get(`http://localhost:8000?city=${normalizedCity}&date=${date}`, {
+        timeout: 20000
+      })
+    );
+    try {
+      const responses = await Promise.all(promises);
+      const daylightData = responses.map((response, index) => ({
+        date: dates[index],
+        daylight: Math.round(response.data.daylight),
+      }));
+
+      // Store the fetched data in LocalStorage with an expiration date
+      const expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 1);
+      localStorage.setItem(
+        normalizedCity,
+        JSON.stringify({ daylightData, expiry })
+      );
+
+      setData((prevData) => [
+        ...prevData,
+        { city: capitalize(city), daylightData },
+      ]);
+      setCity("");
+    } catch (error) {
+      console.error("Failed to fetch data: ", error);
+      if (error.code === "ECONNABORTED") {
+        alert("Request timed out. Please try again later.");
+      } else {
+        alert("Failed to load data.");
+      }
+    }
+    setLoading(false);
+  };
+
+  const resetData = () => {
+    setData([]);
+    setCity("");
   };
 
   return (
@@ -99,6 +116,13 @@ function App() {
             className="bg-gray-800 hover:bg-gray-900 text-white border font-bold py-2 px-4 rounded mt-2 md:mt-0"
           >
             Lisää
+          </button>
+          <button
+            type="button"
+            onClick={resetData}
+            className="bg-red-600 hover:bg-red-700 text-white border font-bold py-2 px-4 rounded ml-2 mt-2 md:mt-0"
+          >
+            Nollaa
           </button>
         </form>
         {loading ? (
