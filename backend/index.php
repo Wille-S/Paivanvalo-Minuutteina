@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -53,7 +56,7 @@ function getDaylightData($lat, $lng, $date) {
             // Further refine the check based on the date
             $month = date('m', strtotime($date));
             if ($month >= 4 && $month <= 8) {
-                 return 24 * 60; // Full day of sunlight
+                return 24 * 60; // Full day of sunlight
             }
         }
 
