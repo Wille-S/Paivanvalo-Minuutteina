@@ -84,21 +84,21 @@ function App() {
     <div className="flex flex-col h-screen justify-between bg-gray-700">
       <div className="container mx-auto p-4 h-1/2">
         <h1 className="text-2xl font-bold text-center text-white mb-4">
-          Daylight Visualizer
+          Päivänvalo minuutteina
         </h1>
         <form onSubmit={addCity} className="mb-4">
           <input
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            placeholder="Enter city"
+            placeholder="Kaupunki"
             className="border p-2 mr-2 rounded w-full bg-gray-800 text-white md:w-auto"
           />
           <button
             type="submit"
             className="bg-gray-800 hover:bg-gray-900 text-white border font-bold py-2 px-4 rounded mt-2 md:mt-0"
           >
-            Add City
+            Lisää
           </button>
         </form>
         {loading ? (
