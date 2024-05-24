@@ -3,21 +3,27 @@ import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 
 function DaylightChart({ data }) {
-  // Define a palette of colors for the bars
+  // Värit palkkeihin ja myös oletusväri
   Chart.defaults.color = '#ffffff';
-  const colors = ['#4dc9f6', '#f67019', '#f53794', '#537bc4', '#acc236', '#166a8f', '#00a950', '#58595b', '#8549ba'];
+  const colors = [
+    '#4dc9f6', '#f67019', '#f53794', '#537bc4', '#acc236', '#166a8f', 
+    '#00a950', '#58595b', '#8549ba', '#ff9f40', '#36a2eb', '#ffcd56',
+    '#8e5ea2', '#3cba9f', '#e8c3b9', '#c45850', '#ff6384', '#36a2eb',
+    '#cc65fe', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384',
+    '#66aa00', '#d3d3d3', '#4682b4', '#ff4500', '#8a2be2', '#da70d6'
+  ];
 
-  // Create chart data with dynamic colors
+  // Luo kaavion datan dynaamisilla väreillä
   const chartData = {
     labels: Array.from({ length: 12 }, (_, i) => new Date(2024, i, 15).toLocaleDateString('fi-FI', { month: 'short' })),
     datasets: data.map((cityData, index) => ({
       label: cityData.city,
       data: cityData.daylightData.map(d => d.daylight),
-      backgroundColor: colors[index % colors.length], // Use a color from the palette
+      backgroundColor: colors[index % colors.length], // Väri paletista
     })),
   };
 
-  // Define chart options
+  // Kaavion asetukset
   const options = {
     responsive: true,
     maintainAspectRatio: false,

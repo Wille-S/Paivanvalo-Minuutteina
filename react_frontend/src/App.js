@@ -10,6 +10,7 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Muuttaa kaupungin nimen alkukirjaimen isoksi
   function capitalize(cityName) {
     return cityName
       .split(" ")
@@ -17,6 +18,7 @@ function App() {
       .join(" ");
   }
 
+  // Käsittelee kaupungin lisäämisen ja hakee päivänvalo tiedot
   const addCity = async (event) => {
     event.preventDefault();
 
@@ -37,12 +39,14 @@ function App() {
       return;
     }
 
+    // Luo taulukon päivämääristä, jotka ovat 15. päivä jokaista kuukautta
     setLoading(true);
     const dates = Array.from(
       { length: 12 },
       (_, i) => new Date(2024, i, 15).toISOString().split("T")[0]
     );
 
+    // Tarkistaa onko tiedot localStoragessa
     const cachedData = localStorage.getItem(normalizedCity);
     if (cachedData) {
       const parsedData = JSON.parse(cachedData);
@@ -60,6 +64,7 @@ function App() {
       }
     }
 
+    // Hakee päivänvalo datan backendistä
     try {
       const response = await axios.post(
         "https://daylenght-production.up.railway.app",
@@ -75,8 +80,9 @@ function App() {
         }
       );
 
-      console.log("Backend response:", response);
+      // console.log("Backend response:", response);
 
+      // Käsittelee ja välimuistittaa datan
       const daylightData = response.data.daylightData.map((entry) => ({
         date: entry.date,
         daylight: Math.round(entry.daylight),
@@ -105,10 +111,12 @@ function App() {
     setLoading(false);
   };
 
+  // Funktio poistaa kaupungin graafista
   const removeCity = (cityToRemove) => {
     setData((prevData) => prevData.filter((entry) => entry.city !== cityToRemove));
   };
 
+  // Nollaa graafin
   const resetData = () => {
     setData([]);
     setCity("");

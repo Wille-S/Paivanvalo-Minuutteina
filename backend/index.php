@@ -17,6 +17,7 @@ $apiKey = getenv('OPEN_CAGE_API_KEY') ?: $_ENV['OPEN_CAGE_API_KEY'];
 
 use GuzzleHttp\Client;
 
+// Hakee kaupungin koordinaatit OpenCage:sta
 function getCoordinates($city) {
     global $apiKey;
     $client = new Client();
@@ -38,6 +39,7 @@ function getCoordinates($city) {
     }
 }
 
+// Hakee päivänvalo datan saatujen kordinaattien perusteella
 function getDaylightData($lat, $lng, $dates) {
     $client = new Client();
     $daylightData = [];
@@ -56,12 +58,12 @@ function getDaylightData($lat, $lng, $dates) {
             $sunsetTime = new DateTime($sunset);
             $dayLength = ($sunsetTime->getTimestamp() - $sunriseTime->getTimestamp()) / 60; // Convert to minutes
 
-            // Check if calculated dayLength is zero or near-zero, which might be erroneous
-            if ($dayLength <= 1) { // Consider near-zero condition to handle slight discrepancies
-                // Further refine the check based on the date
+            // Tarkistaa onko päivän pituus nolla tai lähellä sitä
+            if ($dayLength <= 1) {
+                // Päivämäärän perusteella tietää onko kaamos vai keskiyön aurinko
                 $month = date('m', strtotime($date));
                 if ($month >= 4 && $month <= 8) {
-                    $dayLength = 24 * 60; // Full day of sunlight
+                    $dayLength = 24 * 60; // Koko päivä
                 }
             }
 
@@ -72,6 +74,7 @@ function getDaylightData($lat, $lng, $dates) {
     return $daylightData;
 }
 
+// Käsittelee POST-pyynnön
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
 
