@@ -67,7 +67,7 @@ function App() {
     // Hakee päivänvalo datan backendistä
     try {
       const response = await axios.post(
-        "https://daylenght-production.up.railway.app",
+        "http://localhost:8000",
         {
           city: normalizedCity,
           dates: dates,
