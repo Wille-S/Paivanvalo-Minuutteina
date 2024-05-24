@@ -58,7 +58,7 @@ npm start
 #### Alkunäkymä
 Syötä hakukenttään haluamasi suomalainen kaupunki.
 #### Pylväsdiagrammi
-Pylväsdiagrammissa näkyy syötetyt kaupungit. Kaupunkeja voi lisätä samasta kentästä mistä ensimmäinenkin. Jos hiirtä pitää palkkien päällä saa tarkat minuuttitiedot kaupungeista. Painaen punaista näppäintä saa kaavion nollattua.
+Pylväsdiagrammissa näkyy syötetyt kaupungit. Kaupunkeja voi lisätä samasta kentästä mistä ensimmäinenkin. Jos hiirtä pitää palkkien päällä saa tarkat minuuttitiedot kaupungeista. Painaen punaista näppäintä saa kaavion nollattua. Pudotusvalikosta painamalla saa tietyn kaupungin poistettua.
 
 ### Kiitokset 
 
